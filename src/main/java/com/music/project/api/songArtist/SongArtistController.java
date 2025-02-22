@@ -1,4 +1,4 @@
-package com.music.project.controllers;
+package com.music.project.api.songArtist;
 
 import com.music.project.api.songArtist.dto.request.SongArtistCreationRequest;
 import com.music.project.api.songArtist.dto.request.SongArtistUpdateRequest;
