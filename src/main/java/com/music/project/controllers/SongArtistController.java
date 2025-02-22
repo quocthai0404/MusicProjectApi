@@ -27,8 +27,8 @@ public class SongArtistController {
                 .build();
     }
 
-    @PutMapping("update")
-    ResponseObject<List<SongArtistResponse>> update(int songId,@RequestBody SongArtistUpdateRequest request) {
+    @PutMapping("update/{songId}")
+    ResponseObject<List<SongArtistResponse>> update(@PathVariable int songId,@RequestBody SongArtistUpdateRequest request) {
         System.out.println(request);
         return ResponseObject.<List<SongArtistResponse>>builder()
                 .result(songArtistService.update(songId, request))
