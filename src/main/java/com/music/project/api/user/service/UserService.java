@@ -11,6 +11,7 @@ import com.music.project.helpers.otp.OtpHelper;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -33,6 +34,7 @@ public class UserService {
     @Autowired
     private EmailService emailService;
 
+    
     public User registerUser(UserDTO userDTO) {
         Optional<User> existingUser = userRepository.findByEmail(userDTO.getEmail());
         if (existingUser.isPresent()) {
