@@ -15,5 +15,5 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface SongArtistMapper {
     SongArtistId toSongArtist(SongArtistCreationRequest request);
-    List<SongArtistResponse> toSongArtistReponse(List<SongArtist> songArtists);
+    SongArtistResponse toSongArtistResponse(SongArtist songArtists);
 }
