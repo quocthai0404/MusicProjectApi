@@ -31,6 +31,20 @@ public class Role implements java.io.Serializable {
 	public Role() {
 	}
 
+	public Role(Integer id,String name) {
+		this.id = id;
+		this.name = name;
+
+	}
+
+	// Constructor nhận tham số
+	public Role(Integer id,String name, Date createdAt, Date updateAt) {
+		this.id = id;
+		this.name = name;
+		this.createdAt = createdAt;
+		this.updateAt = updateAt;
+	}
+
 	public Role(String name, Date createdAt, Date updateAt, Set<UserRole> userRoles) {
 		this.name = name;
 		this.createdAt = createdAt;
