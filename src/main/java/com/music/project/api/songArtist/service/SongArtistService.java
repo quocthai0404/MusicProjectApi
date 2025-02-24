@@ -9,7 +9,6 @@ import com.music.project.api.songArtist.dto.response.SongArtistResponse;
 import com.music.project.api.songArtist.mapper.SongArtistMapper;
 import com.music.project.api.songArtist.repository.SongArtistRepository;
 import com.music.project.api.user.repository.UserRepository;
-import com.music.project.entities.Song;
 import com.music.project.entities.SongArtist;
 import com.music.project.entities.SongArtistId;
 import lombok.AccessLevel;
@@ -17,11 +16,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +27,6 @@ public class SongArtistService {
     SongRepository songRepository;
     SongMapper songMapper;
     SongArtistMapper songArtistMapper;
-
     SongArtistRepository songArtistRepository;
     UserRepository artistRepository;
 
@@ -58,13 +54,16 @@ public class SongArtistService {
                 })
                 .collect(Collectors.toList());
 
+        //save into db
+        songArtistRepository.saveAll(songArtists);
+
         //map into response after save all
-        return songArtistMapper.toSongArtistReponse(songArtistRepository.saveAll(songArtists));
+        return songArtists.stream().map(songArtistMapper::toSongArtistResponse).toList();
     }
 
     @Transactional
     public List<SongArtistResponse> update(int songId, SongArtistUpdateRequest request) {
-        //delete songartist
+        //delete song artist
         songArtistRepository.deleteBySong_Id(songId);
 
         //find existing song
@@ -89,7 +88,15 @@ public class SongArtistService {
                 })
                 .collect(Collectors.toList());
 
+        //save into db
+        songArtistRepository.saveAll(songArtists);
+
         //map into response after save all
-        return songArtistMapper.toSongArtistReponse(songArtistRepository.saveAll(songArtists));
+        return songArtists.stream().map(songArtistMapper::toSongArtistResponse).toList();
+    }
+
+    public List<SongArtistResponse> getAll() {
+        var songArtists = songArtistRepository.findAll();
+        return songArtists.stream().map(songArtistMapper::toSongArtistResponse).toList();
     }
 }
