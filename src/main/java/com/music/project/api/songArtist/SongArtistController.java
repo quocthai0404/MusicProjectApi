@@ -34,4 +34,11 @@ public class SongArtistController {
                 .result(songArtistService.update(songId, request))
                 .build();
     }
+
+    @GetMapping("getAll")
+    ResponseObject<List<SongArtistResponse>> getAll() {
+        return ResponseObject.<List<SongArtistResponse>>builder()
+                .result(songArtistService.getAll())
+                .build();
+    }
 }
