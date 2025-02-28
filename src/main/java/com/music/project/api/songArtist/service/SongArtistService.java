@@ -11,6 +11,8 @@ import com.music.project.api.songArtist.repository.SongArtistRepository;
 import com.music.project.api.user.repository.UserRepository;
 import com.music.project.entities.SongArtist;
 import com.music.project.entities.SongArtistId;
+import com.music.project.exception.AppException;
+import com.music.project.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -34,13 +36,19 @@ public class SongArtistService {
     public List<SongArtistResponse> create(SongArtistCreationRequest request) {
         //create song first
         var song = songMapper.toSong(request.getSong());
-        System.out.println(songRepository.save(song));
+        songRepository.save(song);
+        try {
+            songRepository.save(song);
+        }
+        catch ( AppException e){
+            throw  new AppException(ErrorCode.UNCATEGORIZED_ERROR);
+        }
 
         //get artist list from id then use for building song artist list simultaneously (using building pattern lombok)
         List<SongArtist> songArtists = request.getArtistIds().stream()
                 .map(artistId -> {
                     var artist = artistRepository.findById(artistId)
-                            .orElseThrow(() -> new RuntimeException("Artist not found"));
+                            .orElseThrow(() -> new AppException(ErrorCode.DATA_NOT_FOUND));//custom hien ten class
                     return SongArtist.builder()
                             .id( SongArtistId.builder()
                                     .songId(song.getId())
@@ -67,7 +75,8 @@ public class SongArtistService {
         songArtistRepository.deleteBySong_Id(songId);
 
         //find existing song
-        var existingSong = songRepository.findById(songId).orElseThrow(() -> new RuntimeException("Song not found"));
+        //example error response
+        var existingSong = songRepository.findById(songId).orElseThrow(() -> new AppException(ErrorCode.DATA_NOT_FOUND));
 
 
         //get artist list from id then use for building song artist list simultaneously (using building pattern lombok)
