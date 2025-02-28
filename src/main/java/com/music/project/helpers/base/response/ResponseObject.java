@@ -16,8 +16,8 @@ public class ResponseObject<T> {
 
     String message;
     T result;
-	public static Object builder() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	public static Object builder() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 }
