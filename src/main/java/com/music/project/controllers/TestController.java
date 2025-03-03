@@ -21,6 +21,7 @@ public class TestController {
 	private UserRoleService userRoleService;
 
 	@GetMapping(value = "test")
+	@ResponseBody 
 	public String test() {
 		return "ok";
 	}
