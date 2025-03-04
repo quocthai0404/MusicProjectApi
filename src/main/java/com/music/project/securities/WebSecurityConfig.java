@@ -55,14 +55,14 @@ public class WebSecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("api/users/sign-in").permitAll()
-                        .requestMatchers("api/test/**").permitAll()
-                                .requestMatchers("api/users/**").permitAll()
+                                auth.requestMatchers("api/users/sign-in").permitAll()
+                                        .requestMatchers("api/test/**").permitAll()
+                                        .requestMatchers("api/users/**").permitAll()
 
 //                                .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN", "ARTIST")
-                                .requestMatchers("/api/artist/**").hasAnyRole("ARTIST","ADMIN")
-                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                .anyRequest().authenticated()
+                                        .requestMatchers("/api/artist/**").hasAnyRole("ARTIST","ADMIN")
+                                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                        .anyRequest().authenticated()
                 );
 
         http.authenticationProvider(authenticationProvider());
