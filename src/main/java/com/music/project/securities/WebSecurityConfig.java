@@ -51,22 +51,23 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
+        http.cors(cors -> cors.configure(http)) // Enable CORS
+                .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                                auth.requestMatchers("api/users/sign-in").permitAll()
-                                        .requestMatchers("api/test/**").permitAll()
-                                        .requestMatchers("api/users/**").permitAll()
-
-//                                .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN", "ARTIST")
-                                        .requestMatchers("/api/artist/**").hasAnyRole("ARTIST","ADMIN")
-                                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                        .anyRequest().authenticated()
+                        auth.requestMatchers("api/users/sign-in").permitAll()
+                                .requestMatchers("api/test/**").permitAll()
+                                .requestMatchers("api/users/**").permitAll()
+                                .requestMatchers("api/songs/**").permitAll()
+                                .requestMatchers("api/files/**").permitAll()
+                                .requestMatchers("/api/artist/**").hasAnyRole("ARTIST","ADMIN")
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                .anyRequest()
+                                .authenticated()
                 );
 
         http.authenticationProvider(authenticationProvider());
-
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -1,5 +1,6 @@
 package com.music.project.api.song;
 
+import com.music.project.api.song.dto.SongDTO;
 import com.music.project.api.song.service.SongUploaderService;
 import com.music.project.entities.Song;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +20,26 @@ public class SongController {
 
 
     @PostMapping("/uploads")
-    public String uploadSong(@RequestParam("mp3") MultipartFile mp3File
-                           )  {
+    public String uploadSong(@RequestParam("mp3") MultipartFile mp3File, SongDTO songDTO)  {
 //        Song song = new Song();
 //        song.setUrlSource(songUploaderService.uploadMp3ToDropbox(mp3File));
 //        song.setPhoto(songUploaderService.uploadImageToCloudinary(imageFile));
         try {
             return songUploaderService.uploadMp3ToDropbox(mp3File);
+        }catch (Exception e) {
+            return e.getMessage();
+        }
+//
+    }
+
+    @PostMapping("/uploadstest")
+    public String uploadSongTest(@RequestParam("test") String test
+    )  {
+//        Song song = new Song();
+//        song.setUrlSource(songUploaderService.uploadMp3ToDropbox(mp3File));
+//        song.setPhoto(songUploaderService.uploadImageToCloudinary(imageFile));
+        try {
+            return test;
         }catch (Exception e) {
             return e.getMessage();
         }

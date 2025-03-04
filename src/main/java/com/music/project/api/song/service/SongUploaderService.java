@@ -13,10 +13,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.UUID;
 
 @Service
 public class SongUploaderService {
-    private static final String DROPBOX_ACCESS_TOKEN = "sl.u.AFnIv40ia7FQRuX_k3JDnGJ4g-2m0FJNdN_VNKepUWa8w6OZF5dtsYw19TXcLRP54Rho9FWMERtbBt58OLjv5ym-we_oetdHvwHS5zy298oi9npHzy5mDt3wACiNavUvOXbdpFc81Ez81xM5A84S022stUPYe6JdFu5wnMxS1OPqGaaicQ21PV_nnlh4rCL2m-Dc1leaFh1-G_R3WZWi8XWwL6d2g3t3hIIA382fURWtAxz6U7MrQ5gcyjXtxrziORgILJClXsX_z9XfDVfDeyUYcyoRBYs3NKEmpxJ6UI9yVu7qSyUNeUpRpxAzyPALJEvv_SNWnl8ryM5jVULXxy93a2co-VaWsG7qNxSkBHMidZ-OM1BE4nVT3sn4k9rXpE4b0YfpCKqpTF02LMxED96VfbC8ZMOdiPiHMwLlziNlhSTsBH27e6qkfeH5XtBltCZL1qic1CuhiHXUDJl3zcsPGOUJEZSsyk3Q4t3PKCeHeR_sP78F27gvB_Y_ySV8lhRRfykXTaT9ImYbJRwBZ4Mk2JJmmLos0JTj8HPi-OE-3fVIFC-6jmJQ3KHDDV_ZL5cEHtcRQPlCXfJQohCySV-vV-8H4YLCEXoX2Dx66phtGt1W7edf17q3hx5L4rs_7ifmOVzneoqTXA33wUamT1a3vlcX35_tPSS6OHcJ0BOrCyiSqwr-811NNuZKmNOKMkzXb4sZmL1xg1m0elc_rdZzUlaa07AGaYQRuiRDJfjOFLyf7pxkB1OyuWSA8YwwIrCk43qeItifsrb0Xwg1PVPL3y5AhpmvhcdPlytP3lnPuAyXbJ9X-NGWyLZg8EDIFZOTafoWs8vqTqcvOBsE1AAENGxdm8DCl9BdSQpT1u89vs-gOpS8OAvS4ChMV_LTFP0s3bL1ym0e1yCEGRnGiLRIkd6HjXS22RotnzKfxiO5lOEYLm1YqE7I93h9tNBM5O2nV2fCnOC7EceLB2DfPvZl7ODQcLOHOSqVFi6aNyCqf_ftFggsgwNnaWVT-P4ibnsj-vbSoWCyX724RiC9BMwAvRVWI03lu8NQt-xB1ScQ-GFONtSIaJUaC38b-SW5lz4O2zNZbxRIsigy53FPTPos24BEbiS8xZOnt0tY895lKne32Vxm-oBgJdy_DvcsptlBqU3_uMSGccBZY40uusn0ckcsxCDFoTQnOSJBhVwN7TQG4H955om8KIVx1hJnojv4cVhlruhfwF3-REvSNqekmgLyCXE5BhOwpQwMRPj-rD6K5OmBSfSdZME0UBlq2nW0JViS0wQTeZH49ze4283mIgXax61lRnqOlmO2OcE4UEBaPNuusl1nC-3YEiH-rfbkHmKtkRfyXg22OpqDW34ci09nPQz0aZ2ij_nr2MDieo3WsKuiXlOEOwpeVni-vHM";
+    private static final String DROPBOX_ACCESS_TOKEN = "sl.u.AFlj1_Esi6esuASGiAeiMZVI6DLNYQwbZ2lwtOds2FXQXbsnKbH4F2M1AVLlaTv4trokAT76wx_7gLUrq_Z2Ce1_Dor79wtQFGkmGtuGMhMBRzyFWMCt8U__vkE4ZmY0SY7luNH3OtXZy4BlUD-Bq8BDvrVojrB7ewb9xEi5678bWmT3dnTyYDvEb1sHA7KXE5w3evZf5Vu3T32WNprSzVuhZJTN_dG7NiQ6L6LeJIl5WbT9jecPkjYmtYuQzH36uhNEgLfL-Wska7zkYResYvVRXviftwEyUVMk7yREiDNbcp_NFxcSfHn8a_5E9kGW51shEFyc6sBFx1OBOg_ecmZETYfEu33J3c4onjIAGv0zxYiyebk4wVSwudKJrG2n1lH7bqW95EzXr0nYfjT-BRgkZyqtyVACgmqH_6WSbAIs-Xvn74ojnDn99K6ycV_w-zk-euYmEyQk5nnML3s2Kr2ZLdQ8FzYHinSpgKB0T5P2qRbM8Ed-_qC6xXsxXY7UzdF3913MUFqb9ohBdLZu88C6kjNapH1c2QJRGCTU-hNH0WH_OZ6yndQUUpdae41nGnyglqr8hd0KgWDFgCshbC_-eHCMcXkRVMbaGFuFnI2tKmwGYH-oxsfinRCxnjCjpP-lEZcHx_dBCULABjiBwa-tu4NGHcZHS-cQne_tSLlic-efvWK07AGM5cUWcI_IvOPRU6L2kckFvmNzhGCQZS_ulf11L8WAzkHepFG70EVqNvEsLKD8FEISDpYIXDeaZacZ7S5G-ORGgKuLOwy73BchUtvd6hmfvTYF0g5KdJnHTZTIVmzAxDpcQvsGxWhDKRG1vzPMCMzHPMSG8qtpQT8exlOtjkiL8AWdqflYvN6PGb4bfPKZTqDqfi2boIkS_tivXBAJAfwD-17TwWZ0mCBfKGDc5hmQIJZOQ495D7YsVeZ3OarlAkp_bUEvXel6NIfNOu-QYYAYGV51cLvacyGPu5BqI3QH6z_bVKyLb5rIPvYQMVJfygbZ4B6q4A10_gjCRra_m4Oaxauva4ZGXRubH9X7cD2Y3LhZVrtJR7Hi9BKGpzS8-OlQx_G5hJEKwO7NGuQPDUESByl1Q998y1lIS0QNCTB1R8_6qPA6pSqofUZ2B418llGFfO-45CZpt8Fh64nsjLEDtvXDxuHpOG4TO1lYC_KD9NCqqu9KXTrnVjVX86BmmscibRl9FSKU4s89yZTZUasvcndhcJfLGQNo0TW4u6jtGtJswzEUqYLrcvdwySns-DHG0H9yrr53lZ84ViwSxbnegeQ8G0rSll94rH7G9FwLJU2QvvZ2BkXy6fFx0s9mVfVI2TPR7vBh7HyF6483bD8KoopU1SblKS1nQxCdDjizog-gHq9FlGZ-_Jjz0ZPPRAHBn6ys5-Kwb8vot_0gcC7MATNJd0fc-A59";
     private final DbxClientV2 dropboxClient;
 
     public SongUploaderService() {
@@ -33,7 +34,9 @@ public class SongUploaderService {
     public String uploadMp3ToDropbox(MultipartFile file) throws IOException {
         File tempFile = convertMultipartFileToFile(file);
         try (FileInputStream inputStream = new FileInputStream(tempFile)) {
-            FileMetadata metadata = dropboxClient.files().uploadBuilder("/" + tempFile.getName())
+            UUID uuid = UUID.randomUUID();
+            String uuidAsString = uuid.toString();
+            FileMetadata metadata = dropboxClient.files().uploadBuilder("/" + uuidAsString + ".mp3")
                     .uploadAndFinish(inputStream);
             return dropboxClient.files().getTemporaryLink(metadata.getPathLower()).getLink();
         } catch (GetTemporaryLinkErrorException e) {
