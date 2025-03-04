@@ -18,24 +18,24 @@ public class ArtistService {
     @Autowired
     private UserRepository userRepository;
 
-    public ArtistInfo saveArtist(ArtistDTO artistDTO) {
-        Optional<User> userOptional = userRepository.findById(artistDTO.getUserId());
-
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-
-            // Tạo ArtistInfo từ ArtistDTO và User
-            ArtistInfo artistInfo = new ArtistInfo();
-            artistInfo.setUser(user);
-            artistInfo.setAbout(artistDTO.getAbout());
-            artistInfo.setStageName(artistDTO.getStageName());
-//            artistInfo.set
-
-            return artistInfo;
-        } else {
-            // Xử lý trường hợp User không tồn tại (ví dụ: throw exception, trả về null, log lỗi)
-            System.out.println("User with ID " + artistDTO.getUserId() + " not found.");
-            return null; // Hoặc throw một exception tùy thuộc vào yêu cầu của bạn
-        }
-    }
+//    public ArtistInfo artistDTOtoArtist(ArtistDTO artistDTO) {
+//        Optional<User> userOptional = userRepository.findById(artistDTO.getUserId());
+//
+//        if (userOptional.isPresent()) {
+//            User user = userOptional.get();
+//
+//            // Tạo ArtistInfo từ ArtistDTO và User
+//            ArtistInfo artistInfo = new ArtistInfo();
+//            artistInfo.setUser(user);
+//            artistInfo.setAbout(artistDTO.getAbout());
+//            artistInfo.setStageName(artistDTO.getStageName());
+////            artistInfo.set
+//
+//            return artistInfo;
+//        } else {
+//
+//            System.out.println("User with ID " + artistDTO.getUserId() + " not found.");
+//            return null;
+//        }
+//    }
 }

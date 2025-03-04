@@ -58,6 +58,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("api/users/sign-in").permitAll()
                                 .requestMatchers("api/test/**").permitAll()
+                                .requestMatchers("error/**").permitAll()
                                 .requestMatchers("api/users/**").permitAll()
                                 .requestMatchers("api/songs/**").permitAll()
                                 .requestMatchers("api/files/**").permitAll()
