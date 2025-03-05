@@ -9,6 +9,7 @@ import com.music.project.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,4 +39,8 @@ public class ArtistService {
 //            return null;
 //        }
 //    }
+
+    public List<ArtistInfo> getAllArtistByListID(List<Integer> artistIds){
+        return artistRepository.findAllById(artistIds);
+    }
 }

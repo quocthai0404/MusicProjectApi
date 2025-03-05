@@ -10,10 +10,11 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Setter
+@Getter
 public class ResponseObject<T> {
     @Builder.Default
     int code = 200;
-
     String message;
     T result;
 //	public static Object builder() {

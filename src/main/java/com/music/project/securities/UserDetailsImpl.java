@@ -7,6 +7,8 @@ import com.music.project.entities.Role;
 import com.music.project.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Data
+
 public class UserDetailsImpl implements UserDetails {
 
     @Serial

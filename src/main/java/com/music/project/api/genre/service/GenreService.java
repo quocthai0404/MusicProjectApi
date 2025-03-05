@@ -7,11 +7,14 @@ import com.music.project.api.genre.mapper.GenreMapper;
 import com.music.project.api.genre.repository.GenreRepository;
 import com.music.project.api.songArtist.dto.request.SongArtistUpdateRequest;
 import com.music.project.api.songArtist.dto.response.SongArtistResponse;
+import com.music.project.entities.ArtistInfo;
+import com.music.project.entities.Genre;
 import com.music.project.entities.SongArtist;
 import com.music.project.entities.SongArtistId;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +27,11 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class GenreService {
     GenreRepository repository;
+
+    public List<Genre> getAllGenreByListID(List<Integer> genreIds){
+        return repository.findAllById(genreIds);
+    }
+
     GenreMapper mapper;
 
     public GenreResponse create(GenreCreationRequest request) {

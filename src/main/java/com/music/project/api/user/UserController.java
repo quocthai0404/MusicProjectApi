@@ -46,7 +46,7 @@ public class UserController {
 
     @PostMapping(value = "sign-in", consumes = MimeTypeUtils.APPLICATION_JSON_VALUE,
             produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseObject<?>> signIn(@RequestBody SignInRequestDTO signInRequestDto) {
+    public ResponseEntity<?> signIn(@RequestBody SignInRequestDTO signInRequestDto) {
         try {
             return ResponseEntity.ok(authService.signIn(signInRequestDto).getBody());
         } catch (Exception e) {
