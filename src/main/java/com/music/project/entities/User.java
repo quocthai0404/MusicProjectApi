@@ -4,6 +4,9 @@ package com.music.project.entities;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -25,6 +28,7 @@ public class User implements java.io.Serializable {
 
 	private Integer id;
 	private String email;
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private String password;
 	private String fullname;
 	private Date dob;
