@@ -54,12 +54,13 @@ public class AuthServiceImpl implements AuthService {
 
 
         SignInResponseDto signInResponseDto = SignInResponseDto.builder()
-                .username(userDetails.getUsername())
+                .username(userDetails.getEmail())
                 .email(userDetails.getEmail())
                 .id(userDetails.getId())
                 .token(jwt)
                 .type("Bearer")
                 .roles(roles)
+                .fullName(userDetails.getUsername())
                 .build();
 
         return ResponseEntity.ok(
