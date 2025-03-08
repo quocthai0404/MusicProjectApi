@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.music.project.api.artist.dto.ArtistDTO;
 import com.music.project.api.song.dto.SongDTO;
+import com.music.project.api.song.dto.SongResultDTO;
 import com.music.project.api.song.service.SongService;
 import com.music.project.api.song.service.SongUploaderService;
 import com.music.project.api.user.service.UserService;
@@ -14,6 +15,7 @@ import com.music.project.entities.User;
 import com.music.project.helpers.base.response.ResponseObject;
 import com.music.project.helpers.cloudinary.service.CloudinaryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -126,5 +128,13 @@ public class SongController {
     private ResponseEntity<ResponseObject<String>> buildErrorResponse(String message) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ResponseObject<>(400, "Bad Request: " + message, null));
+    }
+
+    @GetMapping("getAll")
+    public ResponseEntity<Page<SongResultDTO>> getSongsPaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<SongResultDTO> songs = songService.getSongsPaged(page, size);
+        return ResponseEntity.ok(songs);
     }
 }
