@@ -60,7 +60,7 @@ public class AuthServiceImpl implements AuthService {
                 .token(jwt)
                 .type("Bearer")
                 .roles(roles)
-                .fullName(userDetails.getUsername())
+                .fullname(userDetails.getUsername())
                 .build();
 
         return ResponseEntity.ok(

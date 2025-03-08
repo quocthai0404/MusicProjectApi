@@ -3,19 +3,27 @@ package com.music.project.api.user.service;
 import com.music.project.api.email.service.EmailService;
 import com.music.project.api.otp.repository.OtpRepository;
 import com.music.project.api.role.repository.RoleRepository;
+import com.music.project.api.user.dto.ChangeInfoUserDTO;
 import com.music.project.api.user.dto.UserDTO;
 import com.music.project.api.user.repository.UserRepository;
 import com.music.project.api.userRole.repository.UserRoleRepository;
 import com.music.project.entities.*;
 import com.music.project.helpers.otp.OtpHelper;
+import com.music.project.securities.JwtUtils;
+import com.music.project.securities.SignInResponseDto;
+import com.music.project.securities.UserDetailsImpl;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -33,6 +41,9 @@ public class UserService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private JwtUtils jwtUtils;
 
     
     public User registerUser(UserDTO userDTO) {
@@ -96,6 +107,67 @@ public class UserService {
 
         return user;
     }
+
+    @Transactional
+    public SignInResponseDto changeInfoUser(ChangeInfoUserDTO changeInfoUserDTO) {
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (!(principal instanceof UserDetailsImpl)) {
+            throw new RuntimeException("Cannot get authenticated user");
+        }
+
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) principal;
+        String loggedInEmail = userDetails.getEmail();
+
+        if (!loggedInEmail.equals(changeInfoUserDTO.getEmail())) {
+            throw new RuntimeException("Unauthorized to update this user");
+        }
+
+        User user = userRepository.findByEmail(changeInfoUserDTO.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        boolean isUpdated = false;
+
+
+        if (changeInfoUserDTO.getPassword() != null && !changeInfoUserDTO.getPassword().isEmpty()) {
+            if (changeInfoUserDTO.getPassword().equals(changeInfoUserDTO.getRePassword())) {
+                user.setPassword(BCrypt.hashpw(changeInfoUserDTO.getPassword(), BCrypt.gensalt()));
+                isUpdated = true;
+            } else {
+                throw new RuntimeException("Passwords do not match");
+            }
+        }
+
+
+        if (changeInfoUserDTO.getFullname() != null && !changeInfoUserDTO.getFullname().isEmpty()) {
+            user.setFullname(changeInfoUserDTO.getFullname());
+            isUpdated = true;
+        }
+
+
+        if (isUpdated) {
+            user.setUpdateAt(new Date());
+        }
+
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+        User userSaved =   userRepository.save(user);
+        SignInResponseDto signInResponseDto = SignInResponseDto.builder()
+                .username(userSaved.getEmail())
+                .email(userSaved.getEmail())
+                .id(userDetails.getId())
+                .token(jwtUtils.generateJwtToken(SecurityContextHolder.getContext().getAuthentication()))
+                .type("Bearer")
+                .roles(roles)
+                .fullname(userSaved.getFullname())
+                .build();
+
+        return signInResponseDto;
+    }
+
 
 
 

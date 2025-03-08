@@ -3,12 +3,14 @@ package com.music.project.api.user;
 import com.music.project.api.otp.dto.OtpRequestDto;
 import com.music.project.api.otp.result.VerificationResult;
 import com.music.project.api.otp.service.OtpService;
+import com.music.project.api.user.dto.ChangeInfoUserDTO;
 import com.music.project.api.user.dto.UserDTO;
 import com.music.project.api.user.service.UserService;
 import com.music.project.entities.User;
 import com.music.project.helpers.base.response.ResponseObject;
 import com.music.project.securities.AuthService;
 import com.music.project.securities.SignInRequestDTO;
+import com.music.project.securities.SignInResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -97,4 +99,19 @@ public class UserController {
                                 .build());
         }
     }
+
+    @PostMapping(value = "change-info",
+            consumes = MimeTypeUtils.APPLICATION_JSON_VALUE,
+            produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseObject<SignInResponseDto>> changeInfo(@RequestBody ChangeInfoUserDTO changeInfoUserDTO) {
+        try {
+            SignInResponseDto updatedUser = userService.changeInfoUser(changeInfoUserDTO);
+            ResponseObject<SignInResponseDto> responseObject = new ResponseObject<>(200, "User info updated successfully", updatedUser);
+            return ResponseEntity.ok(responseObject);
+        } catch (Exception e) {
+            ResponseObject<SignInResponseDto> responseObject = new ResponseObject<>(400, e.getMessage(), null);
+            return ResponseEntity.badRequest().body(responseObject);
+        }
+    }
+
 }

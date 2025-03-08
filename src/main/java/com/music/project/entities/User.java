@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import jakarta.persistence.Column;
@@ -36,13 +37,21 @@ public class User implements java.io.Serializable {
 	private Boolean isActive;
 	private Date createdAt;
 	private Date updateAt;
+	@JsonIgnore
 	private Set<SongArtist> songArtists = new HashSet<SongArtist>(0);
+	@JsonIgnore
 	private Set<UserRole> userRoles = new HashSet<UserRole>(0);
+	@JsonIgnore
 	private Set<Playlist> playlists = new HashSet<Playlist>(0);
+	@JsonIgnore
 	private Set<SongReaction> songReactions = new HashSet<SongReaction>(0);
+	@JsonIgnore
 	private Set<AlbumUser> albumUsers = new HashSet<AlbumUser>(0);
+	@JsonIgnore
 	private Set<ArtistInfo> artistInfos = new HashSet<ArtistInfo>(0);
+	@JsonIgnore
 	private Set<Otp> otps = new HashSet<Otp>(0);
+	@JsonIgnore
 	private Set<StreamHistory> streamHistories = new HashSet<StreamHistory>(0);
 
 	public User() {
