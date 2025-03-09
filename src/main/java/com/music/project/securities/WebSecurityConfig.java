@@ -59,7 +59,14 @@ public class WebSecurityConfig {
                         auth.requestMatchers("api/users/sign-in").permitAll()
                                 .requestMatchers("api/test/**").permitAll()
                                 .requestMatchers("error/**").permitAll()
-                                .requestMatchers("api/users/sign-in", "api/users/register", "api/users/active-account").permitAll()
+                                .requestMatchers("api/users/sign-in",
+                                        "api/users/register",
+                                        "api/users/active-account",
+                                        "api/users/request-otp",
+                                        "api/users/verify-reset-password",
+                                        "api/users/reset-password"
+                                )
+                                .permitAll()
                                 .requestMatchers("api/users/change-info").hasAnyRole("USER","ARTIST","ADMIN")
                                 .requestMatchers("api/songs/**").permitAll()
                                 .requestMatchers("api/files/**").permitAll()

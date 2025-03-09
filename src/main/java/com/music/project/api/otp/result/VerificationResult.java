@@ -6,4 +6,5 @@ public enum  VerificationResult {
     OTP_EXPIRED,
     USER_NOT_FOUND,
     DATABASE_ERROR,
+    NOT_MATCH_PASSWORD,;
 }

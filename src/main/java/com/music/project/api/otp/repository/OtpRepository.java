@@ -11,4 +11,10 @@ import java.util.List;
 public interface OtpRepository extends JpaRepository<Otp, Integer> {
     @Query("SELECT o FROM Otp o WHERE o.code = :otp AND o.user.email = :email AND o.isUsed = false AND o.actionType = 'register'")
     Otp findOtpRegister(@Param("otp") String otp, @Param("email") String email);
+
+    @Query("SELECT o FROM Otp o WHERE o.code = :otp AND o.user.email = :email AND o.isUsed = false AND o.actionType = 'forgetpassword'")
+    Otp findOtpForgetPassword(@Param("otp") String otp, @Param("email") String email);
+
+    @Query("SELECT o FROM Otp o WHERE o.code = :otp AND o.user.email = :email AND o.isUsed = false AND o.actionType = 'resetpassword'")
+    Otp findOtpResetPassword(@Param("otp") String otp, @Param("email") String email);
 }

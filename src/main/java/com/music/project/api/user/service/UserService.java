@@ -168,6 +168,31 @@ public class UserService {
         return signInResponseDto;
     }
 
+    public void requestOtp(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+        User user = userOptional.get();
+
+
+        String otpCode = OtpHelper.generateOtp(6);
+
+
+        emailService.sendEmailOtpResetPass(otpCode, user);
+
+
+        Otp otp = new Otp();
+        otp.setUser(user);
+        otp.setCode(otpCode);
+        otp.setActionType("forgetpassword");
+        otp.setIsUsed(false);
+        otp.setCreatedAt(new Date());
+        otp.setExpiresAt(Date.from(Instant.now().plus(5, ChronoUnit.MINUTES)));
+
+        otpRepository.save(otp);
+    }
 
 
 
