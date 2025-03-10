@@ -69,9 +69,11 @@ public class WebSecurityConfig {
                                 .permitAll()
                                 .requestMatchers("api/users/change-info").hasAnyRole("USER","ARTIST","ADMIN")
                                 .requestMatchers("api/songs/**").permitAll()
+                                .requestMatchers("api/artist-guess-access/**").permitAll()
                                 .requestMatchers("api/files/**").permitAll()
                                 .requestMatchers("/api/artist/**").hasAnyRole("ARTIST","ADMIN")
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                .requestMatchers("api/genre/findAllGenreOptions").permitAll()
                                 .anyRequest()
                                 .authenticated()
                 );

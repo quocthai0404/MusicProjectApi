@@ -2,6 +2,7 @@ package com.music.project.api.artist;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.music.project.api.artist.dto.ArtistDTO;
+import com.music.project.api.artist.dto.ArtistOptionDTO;
 import com.music.project.api.artist.repository.ArtistRepository;
 import com.music.project.api.user.repository.UserRepository;
 import com.music.project.entities.ArtistInfo;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -37,6 +39,11 @@ public class ArtistController {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @GetMapping("findAllArtistOptions")
+    public List<ArtistOptionDTO> findAllArtistOptions() {
+       return artistRepository.findAllArtistOptions();
+    }
 
     @GetMapping("test")
     public String test() {
