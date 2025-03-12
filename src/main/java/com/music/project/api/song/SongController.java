@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.music.project.api.artist.dto.ArtistDTO;
 import com.music.project.api.song.dto.SongDTO;
 import com.music.project.api.song.dto.SongResultDTO;
+import com.music.project.api.song.repository.SongRepository;
 import com.music.project.api.song.service.SongService;
 import com.music.project.api.song.service.SongUploaderService;
 import com.music.project.api.user.service.UserService;
@@ -22,7 +23,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -43,6 +46,8 @@ public class SongController {
     @Autowired
     private SongService songService;
 
+    @Autowired
+    private SongRepository songRepository;
 
 
 //    public SongController(SongUploaderService songUploaderService) {
@@ -87,8 +92,8 @@ public class SongController {
         return "ok";
     }
 
-    @PostMapping("add")
-    public ResponseEntity<ResponseObject<String>> addArtist(@RequestParam("song") String songDTOJson,
+    @PostMapping("/add")
+    public ResponseEntity<ResponseObject<String>> addSong(@RequestParam("song") String songDTOJson,
                                                             @RequestParam(value = "photo", required = false) MultipartFile photo,
                                                             @RequestParam(value = "mp3", required = false) MultipartFile mp3File) {
         try {
@@ -130,11 +135,30 @@ public class SongController {
                 .body(new ResponseObject<>(400, "Bad Request: " + message, null));
     }
 
-    @GetMapping("getAll")
+    @GetMapping("/getAll")
     public ResponseEntity<Page<SongResultDTO>> getSongsPaged(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
         Page<SongResultDTO> songs = songService.getSongsPaged(page, size);
         return ResponseEntity.ok(songs);
     }
+
+    @GetMapping("/getAllSongByArtist/{id}")
+    public ResponseEntity<List<SongResultDTO>> getSongs( @PathVariable Integer id) {
+        List<SongResultDTO> songs = songService.getSongsByArtistId(id);
+
+        if (songs.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+        }
+        return ResponseEntity.ok(songs);
+    }
+
+    @GetMapping("/details/{songId}")
+    public ResponseEntity<SongResultDTO> getSongById(@PathVariable Integer songId) {
+
+        return songService.getSongById(songId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 }

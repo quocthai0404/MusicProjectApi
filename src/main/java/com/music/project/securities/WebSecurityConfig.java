@@ -69,6 +69,7 @@ public class WebSecurityConfig {
                                 .permitAll()
                                 .requestMatchers("api/users/change-info").hasAnyRole("USER","ARTIST","ADMIN")
                                 .requestMatchers("api/songs/**").permitAll()
+                                .requestMatchers("api/playlist/**").permitAll()
                                 .requestMatchers("api/artist-guess-access/**").permitAll()
                                 .requestMatchers("api/files/**").permitAll()
                                 .requestMatchers("/api/artist/**").hasAnyRole("ARTIST","ADMIN")

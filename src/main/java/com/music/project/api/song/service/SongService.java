@@ -20,10 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -134,4 +131,51 @@ public class SongService {
 
         return songsPage;
     }
+
+    public List<SongResultDTO> getSongsByArtistId(Integer artistId) {
+        List<SongResultDTO> songs = songRepository.findSongsByArtistId(artistId);
+
+        // Lấy danh sách ID bài hát
+        List<Integer> songIds = songs.stream().map(SongResultDTO::getId).toList();
+
+        // Truy vấn danh sách nghệ sĩ và thể loại
+        Map<Integer, List<ArtistResultDTO>> artistsMap = songArtistRepository.findBySongIds(songIds)
+                .stream()
+                .collect(Collectors.groupingBy(ArtistResultDTO::getSongId));
+
+
+        Map<Integer, List<GenreResultDTO>> genresMap = songGenreRepository.findBySongIds(songIds)
+                .stream()
+                .collect(Collectors.groupingBy(GenreResultDTO::getSongId));
+
+
+        // Gán danh sách nghệ sĩ và thể loại vào DTO
+        songs.forEach(song -> {
+            song.setArtists(artistsMap.getOrDefault(song.getId(), new ArrayList<>()));
+            song.setGenres(genresMap.getOrDefault(song.getId(), new ArrayList<>()));
+        });
+
+        return songs;
+    }
+
+    public Optional<SongResultDTO> getSongById(Integer songId) {
+        Optional<SongResultDTO> songOpt = songRepository.findSongById(songId);
+
+        if (songOpt.isEmpty()) {
+            return Optional.empty();
+        }
+
+        SongResultDTO song = songOpt.get();
+
+        // Truy vấn danh sách nghệ sĩ và thể loại
+        List<ArtistResultDTO> artists = songArtistRepository.findBySongIds(List.of(songId));
+        List<GenreResultDTO> genres = songGenreRepository.findBySongIds(List.of(songId));
+
+        song.setArtists(artists);
+        song.setGenres(genres);
+
+        return Optional.of(song);
+    }
+
+
 }
