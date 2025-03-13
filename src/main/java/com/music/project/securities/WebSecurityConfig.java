@@ -64,7 +64,8 @@ public class WebSecurityConfig {
                                         "api/users/active-account",
                                         "api/users/request-otp",
                                         "api/users/verify-reset-password",
-                                        "api/users/reset-password"
+                                        "api/users/reset-password",
+                                        "api/users/details/{id}"
                                 )
                                 .permitAll()
                                 .requestMatchers("api/users/change-info").hasAnyRole("USER","ARTIST","ADMIN")

@@ -16,6 +16,7 @@ import com.music.project.helpers.otp.OtpHelper;
 import com.music.project.securities.AuthService;
 import com.music.project.securities.SignInRequestDTO;
 import com.music.project.securities.SignInResponseDto;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -246,6 +247,13 @@ public class UserController {
         };
     }
 
+    @GetMapping("details/{id}")
+    public ResponseEntity<ResponseObject<User>> getUserDetails(@PathVariable Integer id) {
+        return userRepository.findById(id)
+                .map(user -> ResponseEntity.ok(new ResponseObject<>(200, "User found", user)))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ResponseObject<>(404, "User not found with ID: " + id, null)));
+    }
 
 
 }
