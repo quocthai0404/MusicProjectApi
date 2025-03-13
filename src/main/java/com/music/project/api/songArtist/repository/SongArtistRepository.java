@@ -5,8 +5,10 @@ import com.music.project.api.artist.dto.ArtistResultDTO;
 import com.music.project.entities.SongArtist;
 import com.music.project.entities.SongArtistId;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,6 +23,11 @@ public interface SongArtistRepository extends JpaRepository<SongArtist, SongArti
     WHERE sa.song.id IN :songIds
 """)
     List<ArtistResultDTO> findBySongIds(@Param("songIds") List<Integer> songIds);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM SongArtist sa WHERE sa.id.songId = :songId")
+    void deleteBySongId(@Param("songId") Integer songId);
 
 
 

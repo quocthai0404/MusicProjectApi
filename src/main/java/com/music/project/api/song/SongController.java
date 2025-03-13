@@ -4,17 +4,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.music.project.api.artist.dto.ArtistDTO;
+import com.music.project.api.artist.repository.ArtistRepository;
+import com.music.project.api.genre.service.GenreService;
 import com.music.project.api.song.dto.SongDTO;
 import com.music.project.api.song.dto.SongResultDTO;
 import com.music.project.api.song.repository.SongRepository;
 import com.music.project.api.song.service.SongService;
 import com.music.project.api.song.service.SongUploaderService;
+import com.music.project.api.songArtist.repository.SongArtistRepository;
+import com.music.project.api.songGenre.repository.SongGenreRepository;
 import com.music.project.api.user.service.UserService;
-import com.music.project.entities.ArtistInfo;
-import com.music.project.entities.Song;
-import com.music.project.entities.User;
+import com.music.project.entities.*;
 import com.music.project.helpers.base.response.ResponseObject;
 import com.music.project.helpers.cloudinary.service.CloudinaryService;
+import com.music.project.helpers.string.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -23,10 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("api/songs")
@@ -48,6 +48,18 @@ public class SongController {
 
     @Autowired
     private SongRepository songRepository;
+
+    @Autowired
+    private ArtistRepository artistRepository;
+
+    @Autowired
+    private GenreService genreService;
+
+    @Autowired
+    private SongArtistRepository songArtistRepository;
+
+    @Autowired
+    private SongGenreRepository songGenreRepository;
 
 
 //    public SongController(SongUploaderService songUploaderService) {
@@ -160,5 +172,76 @@ public class SongController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ResponseObject<String>> updateSong(@PathVariable Integer id,
+                                                             @RequestParam("song") String songDTOJson,
+                                                             @RequestParam(value = "photo", required = false) MultipartFile photo,
+                                                             @RequestParam(value = "mp3", required = false) MultipartFile mp3File) {
+        try {
+            Optional<Song> existingSongOpt = songRepository.findById(id);
+            if (existingSongOpt.isEmpty()) {
+                return buildErrorResponse("Song not found");
+            }
+            Song existingSong = existingSongOpt.get();
+
+            SongDTO songDTO = objectMapper.readValue(songDTOJson, SongDTO.class);
+
+            // Cập nhật ảnh và file MP3 nếu có
+            if (photo != null && !photo.isEmpty()) {
+                existingSong.setPhoto(uploadIfNotEmpty(photo, existingSong.getPhoto()));
+            }
+            if (mp3File != null && !mp3File.isEmpty()) {
+                existingSong.setUrlSource(songUploaderService.uploadMp3ToDropbox(mp3File));
+            }
+
+            // Cập nhật thông tin cơ bản
+            existingSong.setName(songDTO.getName());
+            existingSong.setSlug(StringHelper.toSlug(songDTO.getName()));
+            existingSong.setReleaseDay(songDTO.getReleaseDay());
+            existingSong.setUpdateAt(new Date());
+
+            // Cập nhật danh sách nghệ sĩ
+            List<ArtistInfo> artists = artistRepository.findAllById(songDTO.getArtistIds());
+            List<User> userList = artists.stream()
+                    .map(ArtistInfo::getUser)
+                    .toList();
+            songArtistRepository.deleteBySongId(id); // Xóa danh sách nghệ sĩ cũ
+
+            List<SongArtist> songArtists = new ArrayList<>();
+            for (User artist : userList) {
+                SongArtist songArtist = new SongArtist();
+                songArtist.setId(new SongArtistId(id, artist.getId()));
+                songArtist.setSong(existingSong);
+                songArtist.setUser(artist);
+                songArtists.add(songArtist);
+            }
+            songArtistRepository.saveAll(songArtists);
+
+            // Cập nhật danh sách thể loại
+            List<Genre> genres = genreService.getAllGenreByListID(songDTO.getGenreIds());
+            songGenreRepository.deleteBySongId(id); // Xóa danh sách thể loại cũ
+
+            List<SongGenre> songGenres = new ArrayList<>();
+            for (Genre genre : genres) {
+                SongGenre songGenre = new SongGenre();
+                songGenre.setId(new SongGenreId(id, genre.getId()));
+                songGenre.setSong(existingSong);
+                songGenre.setGenre(genre);
+                songGenres.add(songGenre);
+            }
+            songGenreRepository.saveAll(songGenres);
+
+            // Lưu bài hát đã cập nhật
+            songRepository.save(existingSong);
+
+            return ResponseEntity.ok(new ResponseObject<>(200, "Song updated successfully", "success"));
+        } catch (JsonProcessingException e) {
+            return buildErrorResponse("Error processing JSON: " + e.getMessage());
+        } catch (Exception e) {
+            return buildErrorResponse("Unexpected error: " + e.getMessage());
+        }
+    }
+
 
 }

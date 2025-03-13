@@ -28,6 +28,11 @@ public class SongArtistId implements java.io.Serializable {
 		this.updateAt = updateAt;
 	}
 
+	public SongArtistId(Integer userId, Integer songId) {
+		this.userId = userId;
+		this.songId = songId;
+	}
+
 	@Column(name = "user_id")
 	public Integer getUserId() {
 		return this.userId;
