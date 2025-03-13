@@ -74,6 +74,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("api/files/**").permitAll()
                                 .requestMatchers("/api/artist/**").hasAnyRole("ARTIST","ADMIN")
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/api/album/add").hasAnyRole("ARTIST","ADMIN")
                                 .requestMatchers("api/genre/findAllGenreOptions").permitAll()
                                 .anyRequest()
                                 .authenticated()
